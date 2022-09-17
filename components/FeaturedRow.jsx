@@ -1,9 +1,34 @@
 import { View, Text, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Icon from 'react-native-heroicons/outline';
 import RestaurantCard from './RestaurantCard';
+import sanityClient from '../sanity';
 
 export default function FeaturedRow({ title, description, id }) {
+  const [restaurants, setRestaurants] = useState([]);
+
+  useEffect(() => {
+    sanityClient
+      .fetch(
+        `
+  *[_type == "featured" && _id == $id] {
+  ...,
+  restaurant[]-> {
+    ...,
+    dishes[]->,
+    type-> {
+      name
+    }
+  },
+}[0]
+  `,
+        { id }
+      )
+      .then(data => {
+        setRestaurants(data?.restaurants);
+      });
+  }, []);
+
   return (
     <View>
       <View className='mt-4 flex-row items-center justify-between px-4'>
@@ -19,44 +44,22 @@ export default function FeaturedRow({ title, description, id }) {
         className='pt-4 '
       >
         {/* RestaurantCard staff */}
-        
-        <RestaurantCard
+        {restaurants?.map(restaurant => {
+          <RestaurantCard
+            key={restaurant._id}
+            id={restaurant._id}
+            imgUrl={restaurant.image}
+            title={restaurant.name}
+            rating={restaurant.rating}
+            genre={restaurant.type?.name}
+            address={restaurant.address}
+            short_description={restaurant.short_description}
+            dishes={restaurant.dishes}
+            long={restaurant.long}
+            lat={restaurant.lat}
+          />;
+        })}
 
-          id={123}
-          imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-          title='Yo! Sushi'
-          rating={4.5}
-          genre='Japanese'
-          address='123 Main St'
-          short_description='This is a Test desctiption'
-          dishes={[]}
-          long={20}
-          lat={0}
-        />
-        <RestaurantCard
-          id={123}
-          imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-          title='Yo! Sushi'
-          rating={4.5}
-          genre='Japanese'
-          address='123 Main St'
-          short_description='This is a Test desctiption'
-          dishes={[]}
-          long={20}
-          lat={0}
-        />
-        <RestaurantCard
-          id={123}
-          imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-          title='Yo! Sushi'
-          rating={4.5}
-          genre='Japanese'
-          address='123 Main St'
-          short_description='This is a Test desctiption'
-          dishes={[]}
-          long={20}
-          lat={0}
-        />
       </ScrollView>
     </View>
   );
