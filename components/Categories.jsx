@@ -1,8 +1,30 @@
 import { ScrollView, Text } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CategoryCard from './CategoryCard';
+import sanityClient from '../sanity';
+import { data } from 'autoprefixer';
+import { urlFor } from '../sanity';
+import axios from 'react-native-axios';
 
 export default function Categories() {
+  const [categories, setCategories] = useState([]);
+
+  // useEffect(() => {
+
+  //     sanityClient
+  //       .fetch(
+  //         `
+  //   *[_type == 'category']
+  //   `
+  //       )
+  //       .then(data => {
+  //         setCategories(data);
+  //       });
+  // }, []);
+  useEffect(() => {
+    fetch('./arr.json').then(res => res.json).then(res => setCategories(res));
+  }, []);
+
   return (
     <ScrollView
       horizontal
@@ -10,31 +32,15 @@ export default function Categories() {
       contentContainerStyle={{ paddingHorizontal: 15, paddingTop: 10 }}
     >
       {/* Catefory Card */}
-      <CategoryCard
-      
-        imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-        title='Testing'
-      />
-      <CategoryCard
-        imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-        title='Testing'
-      />
-      <CategoryCard
-        imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-        title='Testing'
-      />
-      <CategoryCard
-        imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-        title='Testing'
-      />
-      <CategoryCard
-        imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-        title='Testing'
-      />
-      <CategoryCard
-        imgUrl='https://st.depositphotos.com/1005682/2476/i/600/depositphotos_24762569-stock-photo-fast-food-hamburger-hot-dog.jpg'
-        title='Testing'
-      />
+
+      {categories.map(category => {
+        <CategoryCard
+          key={category.id}
+          imgUrl={category.imageUrl}
+          // imgUrl={urlFor(category.image).url()}
+          title={category.title}
+        />;
+      })}
     </ScrollView>
   );
 }

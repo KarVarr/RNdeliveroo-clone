@@ -25,9 +25,9 @@
     "prop-types": "^15.7",
     "react": "^17.0",
     "react-dom": "^17.0",
+    "react-native-axios": "^0.17.1",
     "styled-components": "^5.2.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/KarVarr/RNdeliveroo-clone.git"
